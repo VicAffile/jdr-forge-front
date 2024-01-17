@@ -13,10 +13,15 @@ export const useAuthStore = defineStore('auth', () => {
         token.value = newToken;
     }
 
+    const isAuth = computed(() => {
+        return !!user.value;
+    });
+
     return {
         user,
         token,
         setUser,
-        setToken
+        setToken,
+        isAuth
     }
 });

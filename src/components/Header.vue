@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useAuthStore } from '@/stores/auth';
 
 import Logo from '@/assets/img/logo.png';
+
+const authStore = useAuthStore();
 
 const isSubmenuOpen = ref(false);
 </script>
@@ -10,12 +13,12 @@ const isSubmenuOpen = ref(false);
 <template>
   <header class="header">
     <div class="header__container">
-      <a href="#" class="header__brand">
+      <router-link to="/" class="header__brand">
         <img :src="Logo" alt="Logo" class="header__brand-img" />
         <h1 class="hidden">
           jdR Forge
         </h1>
-      </a>
+      </router-link>
       <nav class="header__menu">
         <ul class="header__menu-list">
           <li class="header__menu-item">
@@ -28,30 +31,39 @@ const isSubmenuOpen = ref(false);
             </router-link>
           </li>
           <li class="header__menu-item" @mouseover="isSubmenuOpen = true" @mouseleave="isSubmenuOpen = false">
-            <router-link to="/profile" class="header__menu-link" >
+            <a href="#" class="header__menu-link" >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
               </svg>
-            </router-link>
-            <ul class="header__submenu" v-if="isSubmenuOpen">
-              <li class="header__submenu-item">
-                <router-link to="/profile" class="header__submenu-link">
-                  Profile
-                </router-link>
-              </li>
-              <li class="header__submenu-item">
-                <router-link to="/profile" class="header__submenu-link">
-                  Settings
-                </router-link>
-              </li>
-              <li class="header__submenu-item">
-                <router-link to="/profile" class="header__submenu-link">
-                  Logout
-                </router-link>
-              </li>
-            </ul>
+            </a>
+            <div v-if="isSubmenuOpen" class="header__submenu-container">
+              <ul v-if="authStore.isAuth" class="header__submenu">
+                <li class="header__submenu-item">
+                  <router-link to="/profile" class="header__submenu-link">
+                    Profile
+                  </router-link>
+                </li>
+                <li class="header__submenu-item">
+                  <router-link to="/profile" class="header__submenu-link">
+                    Logout
+                  </router-link>
+                </li>
+              </ul>
+              <ul v-else class="header__submenu">
+                <li class="header__submenu-item">
+                  <router-link to="/login" class="header__submenu-link">
+                    Login
+                  </router-link>
+                </li>
+                <li class="header__submenu-item">
+                  <router-link to="/register" class="header__submenu-link">
+                    Register
+                  </router-link>
+                </li>
+              </ul>
+            </div>
           </li>
         </ul>
       </nav>
@@ -76,7 +88,7 @@ const isSubmenuOpen = ref(false);
   }
 
   .header__brand {
-    width: 200px;
+    max-width: 150px;
 
     img {
       width: 100%;
@@ -94,8 +106,8 @@ const isSubmenuOpen = ref(false);
   }
 
   .header__menu-item {
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
 
     position: relative;
 
@@ -115,17 +127,19 @@ const isSubmenuOpen = ref(false);
     height: 100%;    
   }
 
-  .header__submenu {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
+  .header__submenu-container {
+    min-width: 100px;
 
+    position: absolute;
+    top: 100%;
+    right: 0;
+  }
+
+  .header__submenu {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
 
-    padding: 10px;
+    margin: 10px 0 0 0;
 
     background-color: #252a36;
     border: 1px solid #333742;
@@ -135,6 +149,8 @@ const isSubmenuOpen = ref(false);
   }
 
   .header__submenu-item {
+    width: 100%;
+
     padding: 10px;
 
     border-bottom: 1px solid #333742;
